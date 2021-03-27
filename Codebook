@@ -1,0 +1,47 @@
+The data was collected during experiments using accelerometers from the Samsung Galaxy S smartphone.The experiments have been carried out with a group of 30 volunteers 
+within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone 
+(Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, they captured 3-axial linear acceleration and 3-axial angular velocity at a constant 
+rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the 
+volunteers were selected for generating the training data and 30% the test data.
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap
+(128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body
+acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. 
+From each window, a vector of features was obtained by calculating variables from the time and frequency domain.
+
+The packages needed to run the analysis on the data are the dplyr and the stringr packages. They are installed and loaded to R in the beggininig of the code. Then, the 
+datasets are downloaded from a URL and unzipped. 
+
+The downloaded file contains multiple small datasets. Namely, 3 test datasets, 3 train datasets, and 2 global datasets that have labels for the variables of the previous datasets.
+The datasets for the train and test experiments were loaded into R using the read.table function and their individual sets were merged using the bind_cols function. The final
+outcome was the x_test dataset containing all the test experiment data and the x_train dataset containing all the train experiment data. 
+
+The column names of the above datasets were defined by the corresponding values in the features dataset in the global file. In order to do that, the features.txt dataset
+was loaded into R using read.csv function and defined as "column_names" but since we are only interested in the second column of that dataset we selected to load that column 
+only with the index tool [,2]. Some of the values in the features dataset were not suitable to be column names and an error message would appear if attempted to coerce it.
+Therefore, the make.names function was used to coerce these variables to be used as names. Then, we added an activity and a subject column to column names and passed these 
+names to the column names of the x_test dataset and the x_train dataset. 
+
+Before merging the test and train datasets, a new column called "group" was added to each dataset noting whether the data belongs to the test or the train datasets using the 
+function mutate. 
+
+The test and train datasets "x_test" and x_train" were merged by rows using the bind_rows function. 
+
+To extract the mean and standard deviation data from the merged dataset, the grep function was used to filter the column names of interest and the argument "mean|std" was
+passed as the pattern. Then, we concatenated the activity, group, and subject columns to the resulting dataset of the grep function and named the output "filtered_columns".
+We later selected the data within each of these columns using the select function and passed the argument all_of(filtered_columns) to include all the values these columns 
+contain and named the resulting dataset "filtered_dataset".
+
+To provide descriptive terms to the activity variable, we loaded the activity_labels.txt dataset from the global file and then casted its values on our filtered_dataset with 
+each activity matched to its corresponding name and added a new column with the result using the mutate function. We named the new column activity_type and passed the argument
+activity_type = activity_labels[filtered_dataset$activity] to match each activity numeric value with its corresponding name from the activity_labels dataset. 
+
+To clean the names of the columns and provide more descriptive and less abbreviated names, we made a new dataset called "appropriately_labeled_dataset". In this dataset, 
+using the sub function, "^t" was changed to "time_" , ".Acc" was changed to "_acceleration", ".Gyro" to "_gyroscope", ".Bod" to "_body_", ".Grav" to "_gravity_", "^f" to 
+"frequency_", and "Mag" to " magnitude ". All these definitions of abbreviations were obtained from the features_info.txt document in the global file. 
+
+To apply the mean function to 2 subgroups in our dataset (activity and subject groups), we used the group_by function on our dataset and passed the arguments (activity, 
+subject). We later applied the summarise function on the grouped dataset and passed the arugments summarise(across(.col = everything(), mean)) to campute the mean of the 
+measurements in each of these subgroups. We named the resulting dataset the "tidy_dataset". Finally, We saved that dataset as a txt file using the write.table function and 
+pushed it to Github.
+
