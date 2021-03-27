@@ -1,7 +1,8 @@
 # Data Cleaning Programming Assignment for Coursera
+
 Files: 
 Codebook.md
-  lists all the variables in the UCI_HAR_Run_Analysis script and explains the thought process behind each line of code
+lists all the variables in the UCI_HAR_Run_Analysis script and explains the thought process behind each line of code
 
 UCI_HAR_Run_Analysis.R
  1. Downloads and unzips the file UCI HAR dataset
